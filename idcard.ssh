@@ -1,0 +1,32 @@
+PCNAME=$(hostname)
+echo "Machine name : $PCNAME"
+OSNAME=$(cat /etc/os-release | head -1 | cut -d '"' -f2)
+Verker=$(uname -r)
+echo "Os $OSNAME and kernel version is $Verker"
+IP=$(hostname -I | cut -d ' ' -f1)
+echo "IP : $IP"
+MemToT=$(free -mh | grep Mem | cut -d ' ' -f12 | cut -b -3 )
+MemAvi=$(free -mh | grep Mem | cut -d ' ' -f47 | cut -b -3 )
+echo "Ram : $MemAvi Go RAM restante sur $MemToT Go RAM total"
+Disk=$(df -h | grep /dev/mapper | cut -d ' ' -f3 | cut -b -3)
+echo "Disque : $Disk space left"
+process1=$(ps -eo %mem,pid,command | sort | tail -6 | head -1 )
+process2=$(ps -eo %mem,pid,command | sort | tail -5 | head -1 )
+process3=$(ps -eo %mem,pid,command | sort | tail -4 | head -1 )
+process4=$(ps -eo %mem,pid,command | sort | tail -3 | head -1 )
+process5=$(ps -eo %mem,pid,command | sort | tail -2 | head -1 )
+echo "Top 5 processes by RAM usage :"
+echo "- $process1"
+echo "- $process2"
+echo "- $process3"
+echo "- $process4"
+echo "- $process5"
+echo "Listing ports :"
+ss -alnpt | while read line
+do
+port=$(echo "$line" | tr -s ' ' | cut -d' ' -f4 | rev | cut -d ':' -f1| rev )
+nom=$(echo "$line" | cut -d'"' -f2)
+echo "- ${port} : ${nom}" 
+done
+chat=$( curl -s  https://api.thecatapi.com/v1/images/search| cut -d '"' -f10)
+echo"Here's your random cat $chat :"
